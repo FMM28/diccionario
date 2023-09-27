@@ -1,24 +1,28 @@
 import wikipediaapi
+import re
+import unidecode
 
-# Crea una instancia de la API de Wikipedia
-wiki_wiki = wikipediaapi.Wikipedia('es')  # Cambia 'es' al idioma deseado
+#sacare palabras de una pagina de wikipedia utilzando su API
 
-# Realiza una búsqueda en Wikipedia
-page_title = "Python (programming language)"  # Cambia esto al título de la página que deseas buscar
-page = wiki_wiki.page(page_title)
+user_agent ="diccionario (https://github.com/FMM28/diccionario)"
+wiki_wiki = wikipediaapi.Wikipedia(user_agent=user_agent,language='es')
 
-# Verifica si la página existe
-if page.exists():
-    # Imprime el título y el contenido de la página
-    print("Título:", page.title)
-    print("Contenido:")
-    print(page.text)
-else:
-    print("La página no existe en Wikipedia.")
+page = wiki_wiki.page("México")
 
-# Puedes acceder a otras propiedades de la página, como los enlaces internos o las secciones.
-# Por ejemplo, para obtener una lista de enlaces internos:
-links = page.links
-print("Enlaces internos:")
-for link_title in sorted(links.keys()):
-    print(link_title)
+datos = page.text.split()
+diccionario=[]
+
+for i in datos:
+    i=i.lower()
+    #utilizo la libreria re para poder eliminar signos de puntuacion y despues la libreria unicode para eliminar los acentos
+    i=unidecode.unidecode(re.sub(r'[^A-Za-záéíóúüñÁÉÍÓÚÜÑ]','',i))
+
+    if not i in diccionario:
+        diccionario.append(i)
+
+print(len(diccionario))
+# print(diccionario)
+
+with open("diccionario.txt",'w') as archivo:
+    for i in diccionario:
+        archivo.write(i+" ")
